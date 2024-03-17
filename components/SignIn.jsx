@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import useSignIn from '../hooks/useSignIn';
 
 const styles = StyleSheet.create({
     container: {
@@ -28,40 +29,49 @@ const styles = StyleSheet.create({
   });
 
   const SignIn = () => {
-    const onSubmit = (values) => {
-      console.log(values);
+    const [signIn] = useSignIn();
+
+    const onSubmit = async (values) => {
+        const { username, password } = values;
+
+        try {
+            const { data } = await signIn({ username, password });
+            console.log(data);
+        } catch (e) {
+            console.error(e);
+        }
     };
-  
+
     return (
-    <Formik
-      initialValues={{ username: '', password: '' }}
-      onSubmit={onSubmit}
-      validationSchema={validationSchema}
-    >
-      {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid }) => (
-        <View style={styles.container}>
-          <TextInput
-            style={[styles.input, touched.username && errors.username && styles.errorInput]}
-            onChangeText={handleChange('username')}
-            onBlur={handleBlur('username')}
-            value={values.username}
-            placeholder="Username"
-          />
-          {touched.username && errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
-          <TextInput
-            style={[styles.input, touched.password && errors.password && styles.errorInput]}
-            onChangeText={handleChange('password')}
-            onBlur={handleBlur('password')}
-            value={values.password}
-            placeholder="Password"
-            secureTextEntry
-          />
-          {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-          <Button onPress={handleSubmit} title="Sign In" disabled={!isValid} />
-        </View>
-      )}
-    </Formik>
-  );
-  };
+        <Formik
+            initialValues={{ username: '', password: '' }}
+            onSubmit={onSubmit}
+            validationSchema={validationSchema}
+        >
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid }) => (
+                <View style={styles.container}>
+                    <TextInput
+                        style={[styles.input, touched.username && errors.username && styles.errorInput]}
+                        onChangeText={handleChange('username')}
+                        onBlur={handleBlur('username')}
+                        value={values.username}
+                        placeholder="Username"
+                    />
+                    {touched.username && errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
+                    <TextInput
+                        style={[styles.input, touched.password && errors.password && styles.errorInput]}
+                        onChangeText={handleChange('password')}
+                        onBlur={handleBlur('password')}
+                        value={values.password}
+                        placeholder="Password"
+                        secureTextEntry
+                    />
+                    {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+                    <Button onPress={handleSubmit} title="Sign In" disabled={!isValid} />
+                </View>
+            )}
+        </Formik>
+    );
+};
   
   export default SignIn;
