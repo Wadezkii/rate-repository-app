@@ -1,0 +1,28 @@
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { NativeRouter, Route, Routes } from 'react-router-native';
+import AppBar from './components/AppBar';
+import RepositoryList from './components/RepositoryList';
+import SignIn from './components/SignIn';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
+
+const Main = () => {
+  return (
+    <NativeRouter>
+      <View style={styles.container}>
+        <AppBar />
+        <Routes>
+          <Route path="/" element={<RepositoryList />} exact />
+          <Route path="/signin" element={<SignIn />} />
+        </Routes>
+      </View>
+    </NativeRouter>
+  );
+};
+
+export default Main;
