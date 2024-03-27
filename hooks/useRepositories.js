@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useQuery, gql } from '@apollo/client';
 
 const GET_REPOSITORIES = gql`
-  query {
-    repositories {
+  query Repositories($orderBy: AllRepositoriesOrderBy, $orderDirection: OrderDirection) {
+    repositories(orderBy: $orderBy, orderDirection: $orderDirection) {
       edges {
         node {
           id
@@ -21,14 +21,17 @@ const GET_REPOSITORIES = gql`
   }
 `;
 
-const useRepositories = () => {
-    const { data, error, loading } = useQuery(GET_REPOSITORIES, {
-      fetchPolicy: 'cache-and-network',
-    });
-  
-    const repositoryNodes = data?.repositories?.edges.map(edge => edge.node) ?? [];
-  
-    return { repositories: repositoryNodes, loading, error, refetch: () => {} };
+export const useRepositories = (orderBy = 'CREATED_AT', orderDirection = 'DESC') => {
+  const { data, error, loading } = useQuery(GET_REPOSITORIES, {
+    variables: { orderBy, orderDirection },
+    fetchPolicy: 'cache-and-network',
+  });
+
+  return {
+    repositories: data?.repositories.edges.map(edge => edge.node) ?? [],
+    loading,
+    error,
   };
+};
 
 export default useRepositories;

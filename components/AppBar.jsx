@@ -6,6 +6,7 @@ import { Link } from 'react-router-native';
 import { useApolloClient, useQuery, gql } from '@apollo/client';
 import AuthStorage from '../utils/authStorage';
 import { useNavigate } from 'react-router-native';
+import { useAuth } from '../utils/AuthContext';
 
 const ME_QUERY = gql`
 {
@@ -17,43 +18,58 @@ const ME_QUERY = gql`
 `;
 
 const styles = StyleSheet.create({
-    container: {
-      paddingTop: Constants.statusBarHeight,
-      backgroundColor: '#24292e',
-      paddingBottom: 10,
-    },
-    tab: {
-      alignItems: 'center',
-    },
-    tabText: {
-      color: 'white',
-      fontSize: 20,
-    },
-    
-  });
+  container: {
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#24292e',
+    paddingBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  tabText: {
+    color: 'white',
+    fontSize: 20,
+  },
+});
 
   const AppBar = () => {
     const { data } = useQuery(ME_QUERY);
     const apolloClient = useApolloClient();
     const authStorage = new AuthStorage();
     const navigate = useNavigate();
+    const { isSignedIn } = useAuth();
   
     const handleSignOut = async () => {
       await authStorage.removeAccessToken();
       await apolloClient.resetStore();
       navigate('/');
     };
+    const handleReviewPress = () => {
+      navigate('/review-form');
+    };
   
     return (
       <View style={styles.container}>
-        {data?.me ? (
-          <Pressable onPress={handleSignOut}>
-            <Text>Sign out</Text>
-          </Pressable>
+        <Pressable onPress={() => navigate('/')}>
+          <Text style={styles.tabText}>Repositories</Text>
+        </Pressable>
+        {isSignedIn ? (
+          <>
+            <Pressable onPress={handleReviewPress}>
+              <Text style={styles.tabText}>Create a review</Text>
+            </Pressable>
+            <Pressable onPress={handleSignOut}>
+              <Text style={styles.tabText}>Sign out</Text>
+            </Pressable>
+          </>
         ) : (
-          <Pressable onPress={() => navigate('/signin')}>
-            <Text>Sign in</Text>
-          </Pressable>
+          <>
+            <Pressable onPress={() => navigate('/signin')}>
+              <Text style={styles.tabText}>Sign in</Text>
+            </Pressable>
+            <Pressable onPress={() => navigate('/signup')}>
+              <Text style={styles.tabText}>Sign up</Text>
+            </Pressable>
+          </>
         )}
       </View>
     );

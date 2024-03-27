@@ -10,7 +10,7 @@ const AUTHENTICATE_MUTATION = gql`
   }
 `;
 
-const useSignIn = () => {
+export const useSignIn = () => {
   const apolloClient = useApolloClient();
   const authStorage = new AuthStorage();
   const [mutate, result] = useMutation(AUTHENTICATE_MUTATION);

@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Button } from 'react-native';
+import * as Linking from 'expo-linking';
 
 const styles = StyleSheet.create({
   container: {
@@ -47,7 +48,12 @@ const formatCount = count => {
   };
 
 
-  const RepositoryItem = ({ item }) => {
+  const RepositoryItem = ({ item, showGitHubButton }) => {
+
+    const handlePress = () => {
+      Linking.openURL(item.url);
+    };
+
     return (
       <View style={styles.container}>
         <View style={styles.topContainer}>
@@ -76,6 +82,7 @@ const formatCount = count => {
             <Text>Rating</Text>
           </View>
         </View>
+        {showGitHubButton && <Button title="Open in GitHub" onPress={handlePress} />}
       </View>
     );
   };
